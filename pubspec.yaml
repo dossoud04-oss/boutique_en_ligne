@@ -1,5 +1,5 @@
 name: boutique_en_ligne
-description: "Une application de boutique en ligne."
+description: "Kado Boutique - Votre boutique en ligne au Benin."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -14,11 +14,22 @@ dependencies:
   provider: ^6.1.2
   cached_network_image: ^3.3.1
   intl: ^0.19.0
+  
+  google_fonts: ^6.2.1
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#FF6F00"
+  adaptive_icon_foreground: "assets/icon/icon.png"
 
 flutter:
   uses-material-design: true

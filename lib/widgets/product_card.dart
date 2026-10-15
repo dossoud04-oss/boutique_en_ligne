@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../models/product.dart';
+import '../theme/app_theme.dart';
+import '../utils/responsive.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -18,36 +20,33 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formatPrice = NumberFormat('#,###', 'fr_FR');
-    final screenWidth = MediaQuery.of(context).size.width;
-    
-    // Taille de police adaptative
-    final titleFontSize = screenWidth < 400 ? 13.0 : 14.0;
-    final priceFontSize = screenWidth < 400 ? 14.0 : 16.0;
+    final r = Responsive.of(context);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(r.space(16)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              blurRadius: r.space(12),
+              offset: Offset(0, r.space(4)),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- IMAGE AVEC RATIO FIXE ET BADGE DE STOCK ---
             Stack(
               children: [
                 AspectRatio(
-                  aspectRatio: 1.0, // Ratio carré, parfait pour les produits
+                  aspectRatio: 1.0,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(r.space(16)),
+                    ),
                     child: product.imageUrl != null && product.imageUrl!.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: product.imageUrl!,
@@ -61,62 +60,64 @@ class ProductCard extends StatelessWidget {
                             ),
                             errorWidget: (context, url, error) => Container(
                               color: Colors.grey[100],
-                              child: const Icon(
+                              child: Icon(
                                 Icons.image_not_supported,
-                                size: 50,
+                                size: r.fontSize(50),
                                 color: Colors.grey,
                               ),
                             ),
                           )
                         : Container(
                             color: Colors.grey[100],
-                            child: const Icon(
+                            child: Icon(
                               Icons.shopping_bag_outlined,
-                              size: 60,
+                              size: r.fontSize(60),
                               color: Colors.grey,
                             ),
                           ),
                   ),
                 ),
-                
-                // Badge "Promo" ou "Stock faible"
                 if (product.stock > 0 && product.stock < 5)
                   Positioned(
-                    top: 8,
-                    left: 8,
+                    top: r.space(8),
+                    left: r.space(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: r.space(8),
+                        vertical: r.space(4),
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(r.space(8)),
                       ),
                       child: Text(
                         "Plus que ${product.stock}",
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: r.fontSize(10),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                
-                // Badge "Rupture"
                 if (product.stock == 0)
                   Positioned(
-                    top: 8,
-                    right: 8,
+                    top: r.space(8),
+                    right: r.space(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: r.space(8),
+                        vertical: r.space(4),
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.black87,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(r.space(8)),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Rupture",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: r.fontSize(10),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -124,71 +125,62 @@ class ProductCard extends StatelessWidget {
                   ),
               ],
             ),
-            
-            // --- INFORMATIONS DU PRODUIT ---
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: EdgeInsets.all(r.space(10)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Catégorie
                   if (product.categoryName != null)
                     Text(
                       product.categoryName!.toUpperCase(),
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: r.fontSize(9),
                         color: Colors.grey[600],
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                       ),
                     ),
-                  const SizedBox(height: 4),
-                  
-                  // Nom du produit
+                  SizedBox(height: r.space(4)),
                   Text(
                     product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: titleFontSize,
+                      fontSize: r.fontSize(14),
                       color: Colors.black87,
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  
-                  // Prix
+                  SizedBox(height: r.space(6)),
                   Text(
                     '${formatPrice.format(product.price)} FCFA',
                     style: TextStyle(
-                      color: const Color(0xFFE53935),
+                      color: AppColors.price,
                       fontWeight: FontWeight.bold,
-                      fontSize: priceFontSize,
+                      fontSize: r.fontSize(16),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  
-                  // Bouton Ajouter
+                  SizedBox(height: r.space(8)),
                   SizedBox(
                     width: double.infinity,
-                    height: 34,
+                    height: r.space(34),
                     child: ElevatedButton(
                       onPressed: product.stock > 0 ? onAddToCart : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF6F00),
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         disabledBackgroundColor: Colors.grey[300],
                         padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(r.space(8)),
                         ),
                         elevation: 0,
                       ),
                       child: Text(
                         product.stock > 0 ? "Ajouter" : "Indisponible",
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: TextStyle(
+                          fontSize: r.fontSize(12),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
